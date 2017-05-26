@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -11,8 +12,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import co.edu.watcher.utils.WatcherUtil;
-
-public class ServicesGUI extends JFrame {
+/**
+ * Class services GUI
+ * @author sebastian
+ * @author harold
+ */
+public class ServicesGUI extends JFrame implements Runnable {
 
 	/**
 	 * Global variables
@@ -20,17 +25,20 @@ public class ServicesGUI extends JFrame {
 	private static final long serialVersionUID = 7565675906280529449L;
 	private JPanel contentPane;
 	private JTable table;
+	private JLabel label;
 	private DefaultTableModel model;
 	private String[] columnNames = { "Service", "Port"};
+	private String ipHost;
 
 	/**
 	 * Create the frame.
-	 * @param ipHost 
+	 * @param ipHost: Host
 	 */
 	@SuppressWarnings("serial")
 	public ServicesGUI(String ipHost) {
+		this.ipHost=ipHost;
 		setTitle("Service Analysis "+ ipHost);		
-		setBounds(100, 100, 439, 369);
+		setBounds(100, 100, 439, 381);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -51,8 +59,22 @@ public class ServicesGUI extends JFrame {
 		JScrollPane scrollpane = new JScrollPane(table);
 		scrollpane.setBounds(12, 12, 405, 317);
 		contentPane.add(scrollpane, BorderLayout.CENTER);
+		label = new JLabel("");
+		label.setBounds(200, 329, 90, 15);
+		contentPane.add(label);
+		Thread thread = new Thread(this);
+		thread.start();
+	}
+	
+	/**
+	 * Thread that scan the services
+	 */
+	public void run() {		
 		WatcherUtil util = new WatcherUtil();
-		util.service("imdb.com",model,false);
+		for (int puerto = util.START; puerto <= util.END; puerto++) {
+			label.setText(String.valueOf(puerto));			
+				util.service(ipHost, puerto, model);			
+		}
 	}
 
 

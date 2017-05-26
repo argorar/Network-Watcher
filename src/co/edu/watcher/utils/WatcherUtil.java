@@ -13,7 +13,6 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 
@@ -26,8 +25,14 @@ import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
  * Class of Utils
  * 
  * @author Sebastian A. 2017
+ * @author harold
  */
 public class WatcherUtil {
+	/**
+	 * Global variables
+	 */
+	public final int START = 5;
+	public final int END = 9000;
 	public String privateIP;
 
 	/**
@@ -53,7 +58,7 @@ public class WatcherUtil {
 			String ni = "";
 			while (nets.hasMoreElements()) {
 				NetworkInterface networkInterface = nets.nextElement();
-				ni += networkInterface.getDisplayName() + "-";
+				ni += networkInterface.getName() + "-";
 			}
 			// System.out.println(nets.getName());
 			// System.out.println(nets.getDisplayName());
@@ -132,83 +137,144 @@ public class WatcherUtil {
 		}
 		return myip;
 	}
-	
-	public void getInfo() {		
+
+	/**
+	 * Method that show in the terminal information about network
+	 */
+	public void getInfo() {
 		NetworkInterface networkInterface;
 		try {
-			String ip=tellMyIP();
+			String ip = tellMyIP();
 			InetAddress in = InetAddress.getByName(ip);
-			networkInterface = NetworkInterface.getByInetAddress(in);	
-			int numBits=networkInterface.getInterfaceAddresses().get(1).getNetworkPrefixLength();
-			System.out.println(numBits);
-			String subnet = ip+"/"+String.valueOf(numBits);
+			networkInterface = NetworkInterface.getByInetAddress(in);
+			int numBits = networkInterface.getInterfaceAddresses().get(1).getNetworkPrefixLength();
+			String subnet = ip + "/" + String.valueOf(numBits);
 			SubnetUtils utils = new SubnetUtils(subnet);
 			SubnetInfo info = utils.getInfo();
 			System.out.printf("Subnet Information for %s:\n", subnet);
-	        System.out.println("--------------------------------------");
-	        System.out.printf("IP Address:\t\t\t%s\t[%s]\n", info.getAddress(),
-	                Integer.toBinaryString(info.asInteger(info.getAddress())));
-	        System.out.printf("Netmask:\t\t\t%s\t[%s]\n", info.getNetmask(),
-	                Integer.toBinaryString(info.asInteger(info.getNetmask())));
-	        System.out.printf("CIDR Representation:\t\t%s\n\n", info.getCidrSignature());
-
-	        System.out.printf("Supplied IP Address:\t\t%s\n\n", info.getAddress());
-
-	        System.out.printf("Network Address:\t\t%s\t[%s]\n", info.getNetworkAddress(),
-	                Integer.toBinaryString(info.asInteger(info.getNetworkAddress())));
-	        System.out.printf("Broadcast Address:\t\t%s\t[%s]\n", info.getBroadcastAddress(),
-	                Integer.toBinaryString(info.asInteger(info.getBroadcastAddress())));
-	        System.out.printf("Low Address:\t\t\t%s\t[%s]\n", info.getLowAddress(),
-	                Integer.toBinaryString(info.asInteger(info.getLowAddress())));
-	        System.out.printf("High Address:\t\t\t%s\t[%s]\n", info.getHighAddress(),
-	                Integer.toBinaryString(info.asInteger(info.getHighAddress())));
-
-	        System.out.printf("Total usable addresses: \t%d\n", Long.valueOf(info.getAddressCountLong()));
-	        System.out.printf("Address List: %s\n\n", Arrays.toString(info.getAllAddresses()));
+			System.out.println("--------------------------------------");
+			System.out.printf("IP Address:\t\t\t%s\t[%s]\n", info.getAddress(),
+					Integer.toBinaryString(info.asInteger(info.getAddress())));
+			System.out.printf("Netmask:\t\t\t%s\t[%s]\n", info.getNetmask(),
+					Integer.toBinaryString(info.asInteger(info.getNetmask())));
+			System.out.printf("CIDR Representation:\t\t%s\n\n", info.getCidrSignature());
+			System.out.printf("Supplied IP Address:\t\t%s\n\n", info.getAddress());
+			System.out.printf("Network Address:\t\t%s\t[%s]\n", info.getNetworkAddress(),
+					Integer.toBinaryString(info.asInteger(info.getNetworkAddress())));
+			System.out.printf("Broadcast Address:\t\t%s\t[%s]\n", info.getBroadcastAddress(),
+					Integer.toBinaryString(info.asInteger(info.getBroadcastAddress())));
+			System.out.printf("Low Address:\t\t\t%s\t[%s]\n", info.getLowAddress(),
+					Integer.toBinaryString(info.asInteger(info.getLowAddress())));
+			System.out.printf("High Address:\t\t\t%s\t[%s]\n", info.getHighAddress(),
+					Integer.toBinaryString(info.asInteger(info.getHighAddress())));
+			System.out.printf("Total usable addresses: \t%d\n", Long.valueOf(info.getAddressCountLong()));
+			// System.out.printf("Address List: %s\n\n",
+			// Arrays.toString(info.getAllAddresses()));
 		} catch (SocketException | UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-    }
-	
-//	public String getNetwork(String maskNetwork,String ip){
-//		String[] mask      = "255.192.0.0".split("\\.");
-//		String[] ipAddress = ip.split("\\.");
-//		StringBuffer ipSubnet  = new StringBuffer();
-//		for(int i=0; i<4; i++)
-//		    try{
-//		        if(ipSubnet.length()>0)
-//		            ipSubnet.append('.');
-//		        ipSubnet.append(Integer.parseInt(ipAddress[i]) & Integer.parseInt(mask[i]));
-//		    }catch(Exception x){ 
-//		        //Integer parsing exception, wrong ipaddress or mask
-//		        break;
-//		    }
-//		System.out.println(ipSubnet);
-//		return ipSubnet.toString();
-//	}
-	
-	public int getNumberOfHosts(int netmaskNumeric) {     
-        Double x = Math.pow(2, (32 - netmaskNumeric));
-        if (x == -1)
-            x = 1D;
-        return x.intValue()-2;
-    }
+	}
 
-//	 private void convertNumericIpToSymbolic(Integer host) {
-//	        StringBuffer sb = new StringBuffer(15);
-//
-//	        for (int shift = 24; shift > 0; shift -= 8) {
-//
-//	            // process 3 bytes, from high order byte down.
-//	            sb.append(Integer.toString((host >>> shift) & 0xff));
-//
-//	            sb.append('.');
-//	        }
-//	        sb.append(Integer.toString(host & 0xff));
-//
-//	        System.out.println(sb.toString());
-//	    }
+	/**
+	 * Method that identifies available hosts
+	 * 
+	 * @return AddressList: Host availables in network
+	 */
+	public String[] getAddressList() {
+		NetworkInterface networkInterface;
+		try {
+			String ip = tellMyIP();
+			InetAddress in = InetAddress.getByName(ip);
+			networkInterface = NetworkInterface.getByInetAddress(in);
+			int numBits = networkInterface.getInterfaceAddresses().get(1).getNetworkPrefixLength();
+			String subnet = ip + "/" + String.valueOf(numBits);
+			SubnetUtils utils = new SubnetUtils(subnet);
+			SubnetInfo info = utils.getInfo();
+			return info.getAllAddresses();
+		} catch (Exception e) {
+		}
+		return null;
+	}
+
+	/**
+	 * Method that gets information about the network and concatenates it in a
+	 * string
+	 * 
+	 * @return allInfo about the network
+	 */
+	public String getInfoString() {
+		NetworkInterface networkInterface;
+		String allInfo = null;
+		try {
+			String ip = tellMyIP();
+			InetAddress in = InetAddress.getByName(ip);
+			networkInterface = NetworkInterface.getByInetAddress(in);
+			int numBits = networkInterface.getInterfaceAddresses().get(1).getNetworkPrefixLength();
+			String subnet = ip + "/" + String.valueOf(numBits);
+			SubnetUtils utils = new SubnetUtils(subnet);
+			SubnetInfo info = utils.getInfo();
+			allInfo = ("Subnet Information for : " + subnet + "\n");
+			allInfo += ("--------------------------------------\n");
+			allInfo += ("IP Address:\t\t\t" + info.getAddress() + "\n");
+			allInfo += ("Netmask:\t\t\t" + info.getNetmask() + "\n");
+			allInfo += ("CIDR Representation:\t\t" + info.getCidrSignature() + "\n");
+			allInfo += ("Supplied IP Address:\t\t" + info.getAddress() + "\n");
+			allInfo += ("Network Address:\t\t" + info.getNetworkAddress() + "\n");
+			allInfo += ("Broadcast Address:\t\t" + info.getBroadcastAddress() + "\n");
+			allInfo += ("Low Address:\t\t\t" + info.getLowAddress() + "\n");
+			allInfo += ("High Address:\t\t\t" + info.getHighAddress() + "\n");
+			allInfo += ("Total usable addresses: \t\t" + Long.valueOf(info.getAddressCountLong()) + "\n");
+			return allInfo;
+		} catch (SocketException | UnknownHostException e) {
+		}
+		return allInfo;
+	}
+
+	// public String getNetwork(String maskNetwork,String ip){
+	// String[] mask = "255.192.0.0".split("\\.");
+	// String[] ipAddress = ip.split("\\.");
+	// StringBuffer ipSubnet = new StringBuffer();
+	// for(int i=0; i<4; i++)
+	// try{
+	// if(ipSubnet.length()>0)
+	// ipSubnet.append('.');
+	// ipSubnet.append(Integer.parseInt(ipAddress[i]) &
+	// Integer.parseInt(mask[i]));
+	// }catch(Exception x){
+	// //Integer parsing exception, wrong ipaddress or mask
+	// break;
+	// }
+	// System.out.println(ipSubnet);
+	// return ipSubnet.toString();
+	// }
+
+	/**
+	 * Method that get number of host
+	 * 
+	 * @param netmaskNumeric:
+	 *            mask network
+	 * @return number of hosts
+	 */
+	public int getNumberOfHosts(int netmaskNumeric) {
+		Double x = Math.pow(2, (32 - netmaskNumeric));
+		if (x == -1)
+			x = 1D;
+		return x.intValue() - 2;
+	}
+
+	// private void convertNumericIpToSymbolic(Integer host) {
+	// StringBuffer sb = new StringBuffer(15);
+	//
+	// for (int shift = 24; shift > 0; shift -= 8) {
+	//
+	// // process 3 bytes, from high order byte down.
+	// sb.append(Integer.toString((host >>> shift) & 0xff));
+	//
+	// sb.append('.');
+	// }
+	// sb.append(Integer.toString(host & 0xff));
+	//
+	// System.out.println(sb.toString());
+	// }
 
 	/**
 	 * Method that set the private address
@@ -222,15 +288,15 @@ public class WatcherUtil {
 	/**
 	 * Method that scan ip and get hostname, NIC and MAC
 	 * 
-	 * @param x
+	 * @param host
 	 *            host
 	 * @param implementation
 	 *            flag to print or not
 	 * @return Array with the values
 	 */
-	public Object[] scan(String x, boolean implementation) {
+	public Object[] scan(String host, boolean implementation) {
 		try {
-			InetAddress in = InetAddress.getByName(privateIP + x);
+			InetAddress in = InetAddress.getByName(host);
 			if (in.isReachable(1500)) {
 				String[] dataNIC = findMAC(in);
 				if (implementation) {
@@ -253,33 +319,37 @@ public class WatcherUtil {
 	/**
 	 * Method that scans ports and verifies their status
 	 * 
-	 * @param ipHost
-	 *            ip of the host
-	 * @param model
-	 *            model of the table
-	 * @param implementation
+	 * @param ipHost: ip of the host
+	 * @param model: model of the table
+	 * @param puerto: Port
 	 */
-	public void service(String ipHost, DefaultTableModel model, boolean implementation) {
-		// for (int puerto : puertos) {
-		for (int puerto = 1; puerto < 81; puerto++) {
-			if (ftp(ipHost, puerto)) {
-				Object[] row = { "FTP", ipHost+":"+puerto };
-				model.addRow(row);
-			} else {
-				Object[] row = { "FTP", "not Found" };
-				model.addRow(row);
-			}
-				
-			if (http(ipHost, puerto)) {
-				Object[] row = { "HTTP", ipHost+":"+puerto };
-				model.addRow(row);
-			} else{
-				Object[] row = { "HTTP", "not Found" };
-				model.addRow(row);
-			}
+	public void service(String ipHost, int puerto, DefaultTableModel model) {
+
+		if (ftp(ipHost, puerto)) {
+			Object[] row = { "FTP", ipHost + ":" + puerto };
+			model.addRow(row);
+		} else if (http(ipHost, puerto)) {
+			Object[] row = { "HTTP", ipHost + ":" + puerto };
+			model.addRow(row);
+		} else if (https(ipHost, puerto)) {
+			Object[] row = { "HTTPS", ipHost + ":" + puerto };
+			model.addRow(row);
+		} else if (smtp(ipHost, puerto)) {
+			Object[] row = { "SMTP", ipHost + ":" + puerto };
+			model.addRow(row);
 		}
+
 	}
 
+	/**
+	 * Method that check the service http
+	 * 
+	 * @param ipHost:
+	 *            Host
+	 * @param puerto:
+	 *            Port
+	 * @return true if the service is on
+	 */
 	@SuppressWarnings("resource")
 	public boolean http(String ipHost, int puerto) {
 		Socket socket = new Socket();
@@ -326,18 +396,28 @@ public class WatcherUtil {
 
 	}
 
-	public void https() {
+	/**
+	 * Method that check the https service
+	 * 
+	 * @param ipHost:
+	 *            Host
+	 * @param puerto:
+	 *            Port
+	 * @return true if the service is on
+	 */
+	@SuppressWarnings("resource")
+	public boolean https(String ipHost, int puerto) {
 		Socket socket = new Socket();
 		OutputStream os = null;
 		InputStream is = null;
 		try {
 			// Crea socket con host y puerto 443
-			socket.connect(new InetSocketAddress("www.upv.es", 443), 1000);
+			socket.connect(new InetSocketAddress(ipHost, puerto), 1000);
 			// obtiene los canales
 			os = socket.getOutputStream();
 			is = socket.getInputStream();
 		} catch (Exception e) {
-			System.out.println("error puerto 443");
+			return false;
 		}
 		// mira se fue creado el socket
 		if (socket != null && os != null && is != null) {
@@ -345,7 +425,7 @@ public class WatcherUtil {
 				// define el protocolo de aplicacion - HTTP
 				Writer writer = new OutputStreamWriter(socket.getOutputStream(), "ISO-8859-1");
 				writer.write("GET / HTTP/1.1\n");
-				writer.write("Host: " + "www.upv.es" + "\n");
+				writer.write("Host: " + ipHost + "\n");
 				writer.write("Connection: Keep-Alive\n");
 				writer.write("Schema: https");
 				writer.write(
@@ -355,21 +435,31 @@ public class WatcherUtil {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
 				// Le cada linea del response
 				String line = reader.readLine();
-				while (line != null) {
-					System.out.println(line);
-					line = reader.readLine();
+				if (line != null) {
+					if (line.contains("HTTP"))
+						return true;
 				}
 				// cierra los canales
 				os.close();
 				is.close();
 				socket.close();
 			} catch (Exception e) {
-				System.out.println("nodefine");
+				return false;
 			}
 		}
+		return false;
 
 	}
 
+	/**
+	 * Method that check the ftp service
+	 * 
+	 * @param ipHost:
+	 *            Host
+	 * @param puerto:
+	 *            Port
+	 * @return true of the service is on
+	 */
 	@SuppressWarnings("resource")
 	public boolean ftp(String ipHost, int puerto) {
 		Socket socket = new Socket();
@@ -411,15 +501,24 @@ public class WatcherUtil {
 		return false;
 	}
 
+	/**
+	 * Method that check the smtp service
+	 * 
+	 * @param ipHost:
+	 *            Host
+	 * @param puerto:
+	 *            Port
+	 * @return true if the service is on
+	 */
 	@SuppressWarnings("resource")
-	public boolean smtp() {
+	public boolean smtp(String ipHost, int puerto) {
 		Socket socket = new Socket();
 		OutputStream os = null;
 		InputStream is = null;
 		try {
 			// Crea socket con host y puerto 21
-			// socket = new Socket("ftp.upv.es", 21);
-			socket.connect(new InetSocketAddress("smtp.gmail.com", 25), 1000);
+			// socket = new Socket("smtp.gmail.com", 25);
+			socket.connect(new InetSocketAddress(ipHost, puerto), 1000);
 			// obtiene los canales
 			os = socket.getOutputStream();
 			is = socket.getInputStream();
@@ -453,28 +552,27 @@ public class WatcherUtil {
 		return false;
 	}
 
+	/**
+	 * MEthod that check the dns service
+	 */
 	public void dns() {
 		Socket socket = new Socket();
 		OutputStream os = null;
 		InputStream is = null;
 		try {
-			// Crea socket con host y puerto 21
-			socket.connect(new InetSocketAddress("201.236.236.186", 53), 1000);
+			socket.connect(new InetSocketAddress("8.8.4.4", 53), 1000);
 			// obtiene los canales
 			os = socket.getOutputStream();
 			is = socket.getInputStream();
 		} catch (Exception e) {
-			System.out.println("error puerto 25");
+			System.out.println("error puerto 53");
 		}
 		// mira se fue creado el socket
 		if (socket != null && os != null && is != null) {
 			try {
-				// define el protocolo de aplicacion - HTTP
-				// Writer writer = new
-				// OutputStreamWriter(socket.getOutputStream(), "ISO-8859-1");
-				// writer.write("SSH-1.99-OpenSSH_2.9p1\n");
-				// writer.flush();
-				// Prepara la lectura de la pagina
+				Writer writer = new OutputStreamWriter(socket.getOutputStream(), "ISO-8859-1");
+				writer.write("SSH-1.99-OpenSSH_2.9p1\n");
+				writer.flush();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
 				// Le cada linea del response
 				String line = reader.readLine();
@@ -494,22 +592,31 @@ public class WatcherUtil {
 
 	/**
 	 * Method that starts scan of the host in the network on the terminal
-	 * 
-	 * @param a
-	 *            : host start
-	 * @param b
-	 *            : host end
 	 */
-	public void terminalScan(int a, int b) {
-		for (int i = a; i < b; i++) {
-			String x = String.valueOf(i);
-			scan(x, true);
+	public void terminalScan() {
+		String[] list = getAddressList();
+		for (int i = 0; i < list.length; i++) {
+			if (list[i] != null)
+				scan(list[i], true);
 		}
 		System.out.println("Scan Finish");
 	}
 
-	public void terminalService(String ip) {
-		service(ip, new DefaultTableModel(), true);
+	/**
+	 * Method that check all the service in terminal mode 
+	 * @param ipHost: Host
+	 * @param puerto: Port
+	 */
+	public void terminalService(String ipHost, int puerto) {
+		if (ftp(ipHost, puerto)) {
+			System.out.println("FTP " + ipHost + ":" + puerto);
+		} else if (http(ipHost, puerto)) {
+			System.out.println("HTTP " + ipHost + ":" + puerto);
+		} else if (https(ipHost, puerto)) {
+			System.out.println("HTTPS " + ipHost + ":" + puerto);
+		} else if (smtp(ipHost, puerto)) {
+			System.out.println("SMTP " + ipHost + ":" + puerto);
+		}
 
 	}
 }

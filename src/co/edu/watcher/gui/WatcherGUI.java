@@ -23,15 +23,16 @@ import javax.swing.table.DefaultTableModel;
 import co.edu.watcher.utils.WatcherUtil;
 
 /**
- * 
+ * Class main GUI
  * @author Sebastian A. 2017
+ * @author harold
  */
 public class WatcherGUI extends JFrame implements Runnable {
 
 	/**
 	 * Global variables
 	 */
-	private static final long serialVersionUID = 2301685011176900485L;
+	private static final long serialVersionUID = 2301685011176900485L;	
 	private WatcherUtil util = new WatcherUtil();
 	private Thread thread = new Thread(this);
 	private JPanel contentPane;
@@ -73,6 +74,13 @@ public class WatcherGUI extends JFrame implements Runnable {
 		});
 
 		JMenuItem mntmAcercaDe = new JMenuItem("About");
+		mntmAcercaDe.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				AboutGUI frame = new AboutGUI();
+				frame.setVisible(true);
+			}
+		});
 		mnArchivo.add(mntmAcercaDe);	
 		mnArchivo.add(mntmSalir);
 
@@ -146,8 +154,7 @@ public class WatcherGUI extends JFrame implements Runnable {
 		panel_main = new JPanel();
 		contentPane.add(panel_main, BorderLayout.CENTER);
 		createTable();
-		util.findPrivateAddress();
-		util.getInfo();
+		util.findPrivateAddress();	
 		thread.start();
 
 	}
@@ -186,11 +193,11 @@ public class WatcherGUI extends JFrame implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				for (int i = 10; i < 17 && state() == true; i++) {
-					lblscan.setText("Scanning :");
-					String x = String.valueOf(i);
-					lblip.setText(util.privateIP + x);
-					Object[] row = util.scan(x,false);
+				String[] list=util.getAddressList();
+				for (int i = util.START; i < util.END && state() == true; i++) {
+					lblscan.setText("Scanning :");					
+					lblip.setText(list[i]);
+					Object[] row = util.scan(list[i],false);
 					if (row != null)
 						model.addRow(row);
 				}

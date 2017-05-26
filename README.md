@@ -4,14 +4,14 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7c70ceeb054a478ab6dc0ed8b3329b05)](https://www.codacy.com/app/argorar/Network-Watcher?utm_source=github.com&utm_medium=referral&utm_content=argorar/Network-Watcher&utm_campaign=badger)
 
-Multiplatform application that scans the local network identifying host and which ports it has open
+Multiplatform application that scans the local network identifying host and which ports it has open, also verifies services such as HTTP, HTTPS, SMTP and FTP.
 
 ## Info about Host
 From the host you get the following information:
 
  * IP Address
  * Device Name
- * Network Adapter
+ * Network Adapters
 
 ## Supported Network Interface
 ```
@@ -27,11 +27,11 @@ From the host you get the following information:
 >   * To add new network interface edit tellMyIP method in WatcherUtil class.
 >     ```
 >     if (Pattern.matches("eth[0-9]", ethr) || Pattern.matches("wlo[0-9]", ethr)
->	    || Pattern.matches("wlan[0-9]", ethr)) {
+>	    || Pattern.matches("wlan[0-9]", ethr)|| Pattern.matches("enp4s[0-9]", ethr)) {
 >     ```
 
 ## Ports
-List of scanned common ports
+Below is a list of the most common ports with a brief description.
 
 | Port | Name | Info |
 | ------ | ------ | ------ |
@@ -62,8 +62,22 @@ List of scanned common ports
 | 5000 | UPnP | Universal Plug'n'Play |
 | 8080 | Proxy Web | Alternative port for HTTP |
 
+
+## Graphic Interface
+The graphical interface has options at the top.
+
+![gui](img/gui.png)
+
+## Terminal Mode
+You can also run the application by the command line as shown in the image below.
+
+![terminal](img/terminal.png)
+
+## Javadoc
+You can check the javadoc [here](doc/index.html).
+
 ## License
-[GPL v3](LICENSE)
+[GPL v3](LICENSE).
 > **Note:**
 >
 >   * [Author icon](https://www.iconfinder.com/webhostingmedia).

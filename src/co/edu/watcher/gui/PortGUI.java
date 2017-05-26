@@ -14,6 +14,13 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import co.edu.watcher.utils.WatcherUtil;
+
+/**
+ * Class ports GUI
+ * @author sebastian
+ * @author harold
+ */
 public class PortGUI extends JFrame implements Runnable{
 
 	/**
@@ -29,7 +36,7 @@ public class PortGUI extends JFrame implements Runnable{
 
 	/**
 	 * Create the frame.
-	 * @param ipHost 
+	 * @param ipHost: Host
 	 */
 	@SuppressWarnings("serial")
 	public PortGUI(String ipHost) {
@@ -67,10 +74,14 @@ public class PortGUI extends JFrame implements Runnable{
 		thread.start();
 	}
 
+	/**
+	 * Thread that scan ports
+	 */
 	public void run() {		
+		WatcherUtil util = new WatcherUtil();
 		Socket p1;
 		// for (int puerto : puertos) {
-		for (int puerto = 5; puerto <= 9000; puerto++) {
+		for (int puerto = util.START; puerto <= util.END; puerto++) {
 			label.setText(String.valueOf(puerto));
 			try {
 				p1 = new Socket();
