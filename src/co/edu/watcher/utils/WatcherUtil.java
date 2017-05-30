@@ -43,16 +43,16 @@ public class WatcherUtil {
 	 * @return data Array with MAC and NIC
 	 */
 	public String[] findMAC(InetAddress in) {
-		// StringBuilder sb = new StringBuilder();
+		 StringBuilder sb = new StringBuilder();
 		String[] data = new String[2];
-		// NetworkInterface a;
+		 NetworkInterface a;
 		try {
-			// a = NetworkInterface.getByInetAddress(in);
-			// byte[] mac = a.getHardwareAddress();
-			// for (int i = 0; i < mac.length; i++) {
-			// sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ?
-			// "-" : ""));
-			// }
+			 a = NetworkInterface.getByInetAddress(in);
+			 byte[] mac = a.getHardwareAddress();
+			 for (int i = 0; i < mac.length; i++) {
+			 sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ?
+			 "-" : ""));
+			 }
 			@SuppressWarnings("static-access")
 			Enumeration<NetworkInterface> nets = NetworkInterface.getByInetAddress(in).getNetworkInterfaces();
 			String ni = "";
@@ -118,7 +118,7 @@ public class WatcherUtil {
 			for (Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces(); ifaces
 					.hasMoreElements();) {
 				iface = (NetworkInterface) ifaces.nextElement();
-				ethr = iface.getDisplayName();
+				ethr = iface.getName();
 				// Ethernet or Wifi
 				if (Pattern.matches("eth[0-9]", ethr) || Pattern.matches("wlo[0-9]", ethr)
 						|| Pattern.matches("wlan[0-9]", ethr) || Pattern.matches("enp4s[0-9]", ethr)) {
@@ -126,8 +126,8 @@ public class WatcherUtil {
 					InetAddress ia = null;
 					for (Enumeration<InetAddress> ips = iface.getInetAddresses(); ips.hasMoreElements();) {
 						ia = (InetAddress) ips.nextElement();
-						if (Pattern.matches(regex, ia.getCanonicalHostName())) {
-							myip = ia.getCanonicalHostName();
+						if (Pattern.matches(regex, ia.getHostAddress())) {
+							myip = ia.getHostAddress();
 							return myip;
 						}
 					}

@@ -194,7 +194,7 @@ public class WatcherGUI extends JFrame implements Runnable {
 		while (true) {
 			try {
 				String[] list=util.getAddressList();
-				for (int i = util.START; i < util.END && state() == true; i++) {
+				for (int i =0; i < list.length && state() == true; i++) {
 					lblscan.setText("Scanning :");					
 					lblip.setText(list[i]);
 					Object[] row = util.scan(list[i],false);
