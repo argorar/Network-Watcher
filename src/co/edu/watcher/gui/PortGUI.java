@@ -19,7 +19,6 @@ import co.edu.watcher.utils.WatcherUtil;
 /**
  * Class ports GUI
  * @author sebastian
- * @author harold
  */
 public class PortGUI extends JFrame implements Runnable{
 

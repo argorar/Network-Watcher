@@ -11,7 +11,6 @@ import co.edu.watcher.utils.WatcherUtil;
  * Launcher Class
  * 
  * @author Sebastian A. 2017
- * @author harold
  */
 public class Main {
 	private static WatcherUtil util = new WatcherUtil();

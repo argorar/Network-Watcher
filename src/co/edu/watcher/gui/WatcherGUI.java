@@ -25,7 +25,6 @@ import co.edu.watcher.utils.WatcherUtil;
 /**
  * Class main GUI
  * @author Sebastian A. 2017
- * @author harold
  */
 public class WatcherGUI extends JFrame implements Runnable {
 

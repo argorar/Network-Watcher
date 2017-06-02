@@ -12,7 +12,6 @@ import co.edu.watcher.utils.WatcherUtil;
 /**
  * Class about GUI
  * @author sebastian
- * @author harold
  */
 public class AboutGUI extends JFrame {
 

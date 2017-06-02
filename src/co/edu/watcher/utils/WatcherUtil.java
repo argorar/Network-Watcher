@@ -25,7 +25,6 @@ import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
  * Class of Utils
  * 
  * @author Sebastian A. 2017
- * @author harold
  */
 public class WatcherUtil {
 	/**
