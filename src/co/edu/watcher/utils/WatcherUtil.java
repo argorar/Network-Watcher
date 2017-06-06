@@ -57,7 +57,9 @@ public class WatcherUtil {
 			String ni = "";
 			while (nets.hasMoreElements()) {
 				NetworkInterface networkInterface = nets.nextElement();
-				ni += networkInterface.getName() + "-";
+				ni += networkInterface.getName();
+				if(nets.hasMoreElements())
+					ni+="-";
 			}
 			// System.out.println(nets.getName());
 			// System.out.println(nets.getDisplayName());
@@ -118,6 +120,7 @@ public class WatcherUtil {
 					.hasMoreElements();) {
 				iface = (NetworkInterface) ifaces.nextElement();
 				ethr = iface.getName();
+				//System.out.println(ethr);
 				// Ethernet or Wifi
 				if (Pattern.matches("eth[0-9]", ethr) || Pattern.matches("wlo[0-9]", ethr)
 						|| Pattern.matches("wlan[0-9]", ethr) || Pattern.matches("enp4s[0-9]", ethr)) {
@@ -296,13 +299,12 @@ public class WatcherUtil {
 	public Object[] scan(String host, boolean implementation) {
 		try {
 			InetAddress in = InetAddress.getByName(host);
-			if (in.isReachable(1500)) {
-				String[] dataNIC = findMAC(in);
+			if (in.isReachable(1500)) {				
 				if (implementation) {
-					System.out.println(in.getHostAddress() + " : " + in.getHostName() + " NI: " + dataNIC[1]);
+					System.out.println(in.getHostAddress() + " : " + in.getHostName());
 					return null;
 				} else {
-					Object[] row = { in.getHostAddress(), in.getHostName(), dataNIC[1] };
+					Object[] row = { in.getHostAddress(), in.getHostName()};
 					return row;
 				}
 			}

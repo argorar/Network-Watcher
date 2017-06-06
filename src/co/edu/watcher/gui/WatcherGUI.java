@@ -41,7 +41,7 @@ public class WatcherGUI extends JFrame implements Runnable {
 	private JLabel lblip;
 	private DefaultTableModel model;
 	private boolean status = false;
-	private String[] columnNames = { "IP Address", "Device Name", "Network Interface" };
+	private String[] columnNames = { "IP Address", "Device Name"};
 
 	/**
 	 * Create the frame.
