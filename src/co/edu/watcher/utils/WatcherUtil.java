@@ -13,6 +13,7 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,31 @@ public class WatcherUtil {
 	public final int END = 9000;
 	public String privateIP;
 
+	public String networkInterfaces() {
+		String cadena="";
+		try {
+			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+			for (NetworkInterface netint : Collections.list(nets))
+				cadena+=displayInterfaceInformation(netint);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cadena;
+	}
+
+	public static String displayInterfaceInformation(NetworkInterface netint) throws SocketException {
+		String cadena="";
+		cadena+="Display name:\t"+ netint.getDisplayName()+"\n";
+		cadena+="Name:\t"+ netint.getName()+"\n";
+		Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+		for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+			cadena+="InetAddress:\t"+ inetAddress+"\n";
+		}
+		cadena+="\n";
+		return cadena;
+	}
+
 	/**
 	 * Method that find MAC and NIC
 	 * 
@@ -42,24 +68,23 @@ public class WatcherUtil {
 	 * @return data Array with MAC and NIC
 	 */
 	public String[] findMAC(InetAddress in) {
-		 StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		String[] data = new String[2];
-		 NetworkInterface a;
+		NetworkInterface a;
 		try {
-			 a = NetworkInterface.getByInetAddress(in);
-			 byte[] mac = a.getHardwareAddress();
-			 for (int i = 0; i < mac.length; i++) {
-			 sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ?
-			 "-" : ""));
-			 }
+			a = NetworkInterface.getByInetAddress(in);
+			byte[] mac = a.getHardwareAddress();
+			for (int i = 0; i < mac.length; i++) {
+				sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+			}
 			@SuppressWarnings("static-access")
 			Enumeration<NetworkInterface> nets = NetworkInterface.getByInetAddress(in).getNetworkInterfaces();
 			String ni = "";
 			while (nets.hasMoreElements()) {
 				NetworkInterface networkInterface = nets.nextElement();
 				ni += networkInterface.getName();
-				if(nets.hasMoreElements())
-					ni+="-";
+				if (nets.hasMoreElements())
+					ni += "-";
 			}
 			// System.out.println(nets.getName());
 			// System.out.println(nets.getDisplayName());
@@ -120,7 +145,7 @@ public class WatcherUtil {
 					.hasMoreElements();) {
 				iface = (NetworkInterface) ifaces.nextElement();
 				ethr = iface.getName();
-				//System.out.println(ethr);
+				// System.out.println(ethr);
 				// Ethernet or Wifi
 				if (Pattern.matches("eth[0-9]", ethr) || Pattern.matches("wlo[0-9]", ethr)
 						|| Pattern.matches("wlan[0-9]", ethr) || Pattern.matches("enp4s[0-9]", ethr)) {
@@ -299,12 +324,12 @@ public class WatcherUtil {
 	public Object[] scan(String host, boolean implementation) {
 		try {
 			InetAddress in = InetAddress.getByName(host);
-			if (in.isReachable(1500)) {				
+			if (in.isReachable(1500)) {
 				if (implementation) {
 					System.out.println(in.getHostAddress() + " : " + in.getHostName());
 					return null;
 				} else {
-					Object[] row = { in.getHostAddress(), in.getHostName()};
+					Object[] row = { in.getHostAddress(), in.getHostName() };
 					return row;
 				}
 			}
@@ -320,9 +345,12 @@ public class WatcherUtil {
 	/**
 	 * Method that scans ports and verifies their status
 	 * 
-	 * @param ipHost: ip of the host
-	 * @param model: model of the table
-	 * @param puerto: Port
+	 * @param ipHost:
+	 *            ip of the host
+	 * @param model:
+	 *            model of the table
+	 * @param puerto:
+	 *            Port
 	 */
 	public void service(String ipHost, int puerto, DefaultTableModel model) {
 
@@ -604,9 +632,12 @@ public class WatcherUtil {
 	}
 
 	/**
-	 * Method that check all the service in terminal mode 
-	 * @param ipHost: Host
-	 * @param puerto: Port
+	 * Method that check all the service in terminal mode
+	 * 
+	 * @param ipHost:
+	 *            Host
+	 * @param puerto:
+	 *            Port
 	 */
 	public void terminalService(String ipHost, int puerto) {
 		if (ftp(ipHost, puerto)) {

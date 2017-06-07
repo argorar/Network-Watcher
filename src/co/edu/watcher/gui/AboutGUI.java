@@ -43,7 +43,7 @@ public class AboutGUI extends JFrame {
 			txtpn.setBackground(new Color(204, 204, 255));
 			txtpn.setLineWrap(true);
 			txtpn.setEditable(false);
-			txtpn.setText(util.getInfoString() + "\nNetwork Interfaces: "+dataNIC[1]);
+			txtpn.setText(util.getInfoString() + "\nNetwork Interfaces: "+dataNIC[1]);			
 			contentPane.add(txtpn, BorderLayout.CENTER);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block

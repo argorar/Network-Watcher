@@ -153,6 +153,8 @@ public class WatcherGUI extends JFrame implements Runnable {
 		panel_main = new JPanel();
 		contentPane.add(panel_main, BorderLayout.CENTER);
 		createTable();
+		//String cadena =  util.networkInterfaces();
+		//JOptionPane.showConfirmDialog(null, cadena);
 		util.findPrivateAddress();	
 		thread.start();
 
