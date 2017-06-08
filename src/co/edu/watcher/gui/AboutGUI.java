@@ -27,17 +27,19 @@ public class AboutGUI extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @param privateIP 
 	 */
-	public AboutGUI() {
+	public AboutGUI(String privateIP) {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		WatcherUtil util = new WatcherUtil();
+		util.setPrivateIP(privateIP);
 		InetAddress in;
 		try {
-			in = InetAddress.getByName(util.tellMyIP());
+			in = InetAddress.getByName(privateIP);
 			String[] dataNIC = util.findMAC(in);
 			JTextArea txtpn = new JTextArea();
 			txtpn.setBackground(new Color(204, 204, 255));

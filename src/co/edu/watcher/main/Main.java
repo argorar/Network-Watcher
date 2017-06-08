@@ -71,7 +71,7 @@ public class Main {
 	 * @param args
 	 */
 	private static void terminalScan(String[] args) {
-		util.findPrivateAddress();
+		
 		util.terminalScan();
 	}
 

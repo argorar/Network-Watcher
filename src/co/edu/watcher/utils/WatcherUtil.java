@@ -13,6 +13,7 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
@@ -35,29 +36,42 @@ public class WatcherUtil {
 	public final int END = 9000;
 	public String privateIP;
 
-	public String networkInterfaces() {
-		String cadena="";
+	/**
+	 * Method that list information about all the network interfaces
+	 * @return list: All the network interfaces
+	 */
+	public ArrayList<String> networkInterfaces() {
+		ArrayList<String> list = new ArrayList<>();
 		try {
 			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-			for (NetworkInterface netint : Collections.list(nets))
-				cadena+=displayInterfaceInformation(netint);
+			for (NetworkInterface netint : Collections.list(nets)){			
+				if(!"lo".equals(netint.getDisplayName()))//ignore looback
+					list.add(displayInterfaceInformation(netint));
+			}
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return cadena;
+		return list;
 	}
 
+	/**
+	 * Method that get information about network interface
+	 * @param netint : network interface
+	 * @return info : information about network interface
+	 * @throws SocketException
+	 */
 	public static String displayInterfaceInformation(NetworkInterface netint) throws SocketException {
-		String cadena="";
-		cadena+="Display name:\t"+ netint.getDisplayName()+"\n";
-		cadena+="Name:\t"+ netint.getName()+"\n";
+		String info = "";
+		// cadena+="Display name:\t"+ netint.getDisplayName()+"\n";//Display
+		// name
+		info += netint.getName();// name
 		Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
 		for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-			cadena+="InetAddress:\t"+ inetAddress+"\n";
+			if (validateIPv4(inetAddress.getHostAddress()))
+				info += inetAddress;
 		}
-		cadena+="\n";
-		return cadena;
+		return info;
 	}
 
 	/**
@@ -134,36 +148,36 @@ public class WatcherUtil {
 	 * 
 	 * @return myip private myip address
 	 */
-	public String tellMyIP() {
-		NetworkInterface iface = null;
-		String ethr;
-		String myip = "";
-		String regex = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-		try {
-			for (Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces(); ifaces
-					.hasMoreElements();) {
-				iface = (NetworkInterface) ifaces.nextElement();
-				ethr = iface.getName();
-				// System.out.println(ethr);
-				// Ethernet or Wifi
-				if (Pattern.matches("eth[0-9]", ethr) || Pattern.matches("wlo[0-9]", ethr)
-						|| Pattern.matches("wlan[0-9]", ethr) || Pattern.matches("enp4s[0-9]", ethr)) {
-					// System.out.println("Interface:" + ethr);
-					InetAddress ia = null;
-					for (Enumeration<InetAddress> ips = iface.getInetAddresses(); ips.hasMoreElements();) {
-						ia = (InetAddress) ips.nextElement();
-						if (Pattern.matches(regex, ia.getHostAddress())) {
-							myip = ia.getHostAddress();
-							return myip;
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-		}
-		return myip;
-	}
+//	public String tellMyIP() {
+//		NetworkInterface iface = null;
+//		String ethr;
+//		String myip = "";
+//		String regex = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+//				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+//		try {
+//			for (Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces(); ifaces
+//					.hasMoreElements();) {
+//				iface = (NetworkInterface) ifaces.nextElement();
+//				ethr = iface.getName();
+//				// System.out.println(ethr);
+//				// Ethernet or Wifi
+//				if (Pattern.matches("eth[0-9]", ethr) || Pattern.matches("wlo[0-9]", ethr)
+//						|| Pattern.matches("wlan[0-9]", ethr) || Pattern.matches("enp4s[0-9]", ethr)) {
+//					// System.out.println("Interface:" + ethr);
+//					InetAddress ia = null;
+//					for (Enumeration<InetAddress> ips = iface.getInetAddresses(); ips.hasMoreElements();) {
+//						ia = (InetAddress) ips.nextElement();
+//						if (Pattern.matches(regex, ia.getHostAddress())) {
+//							myip = ia.getHostAddress();
+//							return myip;
+//						}
+//					}
+//				}
+//			}
+//		} catch (Exception e) {
+//		}
+//		return myip;
+//	}
 
 	/**
 	 * Method that show in the terminal information about network
@@ -171,7 +185,7 @@ public class WatcherUtil {
 	public void getInfo() {
 		NetworkInterface networkInterface;
 		try {
-			String ip = tellMyIP();
+			String ip = privateIP;
 			InetAddress in = InetAddress.getByName(ip);
 			networkInterface = NetworkInterface.getByInetAddress(in);
 			int numBits = networkInterface.getInterfaceAddresses().get(1).getNetworkPrefixLength();
@@ -209,7 +223,7 @@ public class WatcherUtil {
 	public String[] getAddressList() {
 		NetworkInterface networkInterface;
 		try {
-			String ip = tellMyIP();
+			String ip = privateIP;
 			InetAddress in = InetAddress.getByName(ip);
 			networkInterface = NetworkInterface.getByInetAddress(in);
 			int numBits = networkInterface.getInterfaceAddresses().get(1).getNetworkPrefixLength();
@@ -232,7 +246,7 @@ public class WatcherUtil {
 		NetworkInterface networkInterface;
 		String allInfo = null;
 		try {
-			String ip = tellMyIP();
+			String ip = privateIP;
 			InetAddress in = InetAddress.getByName(ip);
 			networkInterface = NetworkInterface.getByInetAddress(in);
 			int numBits = networkInterface.getInterfaceAddresses().get(1).getNetworkPrefixLength();
@@ -302,15 +316,6 @@ public class WatcherUtil {
 	//
 	// System.out.println(sb.toString());
 	// }
-
-	/**
-	 * Method that set the private address
-	 */
-	public void findPrivateAddress() {
-		String[] array = tellMyIP().split("\\.");
-		privateIP = array[0] + "." + array[1] + "." + array[2] + ".";
-		// System.out.println(privateIP);
-	}
 
 	/**
 	 * Method that scan ip and get hostname, NIC and MAC
@@ -650,5 +655,25 @@ public class WatcherUtil {
 			System.out.println("SMTP " + ipHost + ":" + puerto);
 		}
 
+	}
+
+	/**
+	 * Method that validate if the ip is v4
+	 * 
+	 * @param ip
+	 *            : Host
+	 * @return true: if is v4
+	 */
+	public static boolean validateIPv4(String ip) {
+		Pattern PATTERN = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+		return PATTERN.matcher(ip).matches();
+	}
+	
+	public void setPrivateIP(String privateIP) {
+		this.privateIP = privateIP;
+	}
+	
+	public String getPrivateIP() {
+		return privateIP;
 	}
 }

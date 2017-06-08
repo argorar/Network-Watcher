@@ -7,7 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -68,7 +70,7 @@ public class WatcherGUI extends JFrame implements Runnable {
 		JMenuItem mntmSalir = new JMenuItem("Quit");
 		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
+				System.exit(ABORT);
 			}
 		});
 
@@ -76,7 +78,7 @@ public class WatcherGUI extends JFrame implements Runnable {
 		mntmAcercaDe.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				AboutGUI frame = new AboutGUI();
+				AboutGUI frame = new AboutGUI(util.getPrivateIP());
 				frame.setVisible(true);
 			}
 		});
@@ -152,15 +154,27 @@ public class WatcherGUI extends JFrame implements Runnable {
 
 		panel_main = new JPanel();
 		contentPane.add(panel_main, BorderLayout.CENTER);
-		createTable();
-		//String cadena =  util.networkInterfaces();
-		//JOptionPane.showConfirmDialog(null, cadena);
-		util.findPrivateAddress();	
+		createTable();	
+		seletionNI();			
 		thread.start();
 
 	}
 
 	
+
+	private void seletionNI() {
+		ArrayList<String> stockList = util.networkInterfaces();
+		String[] stockArr = new String[stockList.size()];
+		stockArr = stockList.toArray(stockArr);		
+		ImageIcon icon = new ImageIcon("img/network.png");
+	    String resp = (String) JOptionPane.showInputDialog(null, "Please select a network interface.", "Network Interfaces", JOptionPane.DEFAULT_OPTION, icon, stockArr, stockArr[0]);
+		if(resp==null)
+			System.exit(ABORT);	    
+	    String[] array=resp.split("/");
+	    util.setPrivateIP(array[1]);
+	}
+
+
 
 	/**
 	 * Methos that create the table
