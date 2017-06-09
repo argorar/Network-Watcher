@@ -26,6 +26,7 @@ import co.edu.watcher.utils.WatcherUtil;
 
 /**
  * Class main GUI
+ * 
  * @author Sebastian A. 2017
  */
 public class WatcherGUI extends JFrame implements Runnable {
@@ -33,7 +34,7 @@ public class WatcherGUI extends JFrame implements Runnable {
 	/**
 	 * Global variables
 	 */
-	private static final long serialVersionUID = 2301685011176900485L;	
+	private static final long serialVersionUID = 2301685011176900485L;
 	private WatcherUtil util = new WatcherUtil();
 	private Thread thread = new Thread(this);
 	private JPanel contentPane;
@@ -43,7 +44,7 @@ public class WatcherGUI extends JFrame implements Runnable {
 	private JLabel lblip;
 	private DefaultTableModel model;
 	private boolean status = false;
-	private String[] columnNames = { "IP Address", "Device Name"};
+	private String[] columnNames = { "IP Address", "Device Name" };
 
 	/**
 	 * Create the frame.
@@ -82,7 +83,16 @@ public class WatcherGUI extends JFrame implements Runnable {
 				frame.setVisible(true);
 			}
 		});
-		mnArchivo.add(mntmAcercaDe);	
+		mnArchivo.add(mntmAcercaDe);
+
+		JMenuItem mntmSwitchNi = new JMenuItem("Switch NI");
+		mntmSwitchNi.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				seletionNI(1);
+			}
+		});
+		mnArchivo.add(mntmSwitchNi);
 		mnArchivo.add(mntmSalir);
 
 		JMenu mnstart = new JMenu("Start");
@@ -117,7 +127,7 @@ public class WatcherGUI extends JFrame implements Runnable {
 		mnViewPorts.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if(seletion()){
+				if (seletion()) {
 					String ipHost = (String) model.getValueAt(table.getSelectedRow(), 0);
 					PortGUI frame = new PortGUI(ipHost);
 					frame.setVisible(true);
@@ -125,17 +135,17 @@ public class WatcherGUI extends JFrame implements Runnable {
 			}
 		});
 		menuBar.add(mnViewPorts);
-		
-		JMenu mnViewServices = new JMenu("View Services");	
+
+		JMenu mnViewServices = new JMenu("View Services");
 		mnViewServices.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if(seletion()){
+				if (seletion()) {
 					String ipHost = (String) model.getValueAt(table.getSelectedRow(), 0);
 					ServicesGUI frame = new ServicesGUI(ipHost);
-					frame.setVisible(true);					
+					frame.setVisible(true);
 				}
-			}			
+			}
 		});
 		menuBar.add(mnViewServices);
 		contentPane = new JPanel();
@@ -154,27 +164,30 @@ public class WatcherGUI extends JFrame implements Runnable {
 
 		panel_main = new JPanel();
 		contentPane.add(panel_main, BorderLayout.CENTER);
-		createTable();	
-		seletionNI();			
+		createTable();
+		seletionNI(0);
 		thread.start();
 
 	}
 
-	
-
-	private void seletionNI() {
+	/**
+	 * Method that show all network interface
+	 * @param call : Kind of execution , 0 is the beginning
+	 */
+	private void seletionNI(int call) {
 		ArrayList<String> stockList = util.networkInterfaces();
 		String[] stockArr = new String[stockList.size()];
-		stockArr = stockList.toArray(stockArr);		
+		stockArr = stockList.toArray(stockArr);
 		ImageIcon icon = new ImageIcon("img/network.png");
-	    String resp = (String) JOptionPane.showInputDialog(null, "Please select a network interface.", "Network Interfaces", JOptionPane.DEFAULT_OPTION, icon, stockArr, stockArr[0]);
-		if(resp==null)
-			System.exit(ABORT);	    
-	    String[] array=resp.split("/");
-	    util.setPrivateIP(array[1]);
+		String resp = (String) JOptionPane.showInputDialog(null, "Please select a network interface.",
+				"Network Interfaces", JOptionPane.CLOSED_OPTION, icon, stockArr, stockArr[0]);
+		if (resp == null && call == 0)
+			System.exit(ABORT);
+		if (resp != null) {
+			String[] array = resp.split("/");
+			util.setPrivateIP(array[1]);
+		}
 	}
-
-
 
 	/**
 	 * Methos that create the table
@@ -199,8 +212,6 @@ public class WatcherGUI extends JFrame implements Runnable {
 		// Agregamos el scrollpanel al contenedor
 		panel_main.add(scrollpane, BorderLayout.CENTER);
 	}
-	
-	
 
 	/**
 	 * Thread that does the scan
@@ -208,11 +219,11 @@ public class WatcherGUI extends JFrame implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				String[] list=util.getAddressList();
-				for (int i =0; i < list.length && state() == true; i++) {
-					lblscan.setText("Scanning :");					
+				String[] list = util.getAddressList();
+				for (int i = 0; i < list.length && state() == true; i++) {
+					lblscan.setText("Scanning :");
 					lblip.setText(list[i]);
-					Object[] row = util.scan(list[i],false);
+					Object[] row = util.scan(list[i], false);
 					if (row != null)
 						model.addRow(row);
 				}
@@ -224,18 +235,18 @@ public class WatcherGUI extends JFrame implements Runnable {
 			}
 		}
 	}
-	
+
 	/**
-	 * Method that verifies the selection of a host 
+	 * Method that verifies the selection of a host
+	 * 
 	 * @return If there is a selection true, false in other case
 	 */
 	private boolean seletion() {
 		int s = table.getSelectedRow();
-		if (s==-1){
-			JOptionPane.showMessageDialog(null, "Please select a Host");
+		if (s == -1) {
+			JOptionPane.showMessageDialog(null, "Please select a Host", "Alert", JOptionPane.WARNING_MESSAGE);
 			return false;
-		}
-		else 
+		} else
 			return true;
 	}
 
