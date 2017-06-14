@@ -1,6 +1,8 @@
 package co.edu.watcher.main;
 
 import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -17,7 +19,9 @@ public class Main {
 
 	/**
 	 * Launch the application.
-	 * @param args: Arguments 
+	 * 
+	 * @param args:
+	 *            Arguments
 	 */
 	public static void main(String[] args) {
 		if (args.length == 0) {
@@ -41,45 +45,72 @@ public class Main {
 		} else if (args[0].equals("-c")) {
 			serviceScan(args);
 		} else if (args[0].equals("-f")) {
+			getInfo();			
+		} else
+			help();
+
+	}
+
+	/**
+	 * Launch info of network interface	 
+	 */
+	private static void getInfo() {
+		try {
+			seletionNI();			
 			util.getInfo();
+		} catch (Exception e) {
+			System.err.println("Please only numbers.");
 		}
-
-
 	}
 
 	/**
 	 * Launch service scan
-	 * @param args: Host
+	 * 
+	 * @param args:
+	 *            Host
 	 */
 	private static void serviceScan(String[] args) {
-		for (int puerto = util.START; puerto <= util.END; puerto++) {
-			util.terminalService(args[1],puerto);
-		}
+		if (util.validateIPv4(args[1])) {
+			for (int puerto = util.START; puerto <= util.END; puerto++) {
+				util.terminalService(args[1], puerto);
+			}
+		} else
+			System.err.println("Please enter a valid ip.");
 	}
 
 	/**
 	 * Launch port scan
-	 * @param args: Host
+	 * 
+	 * @param args:
+	 *            Host
 	 */
 	private static void portScan(String[] args) {
-		util.ports(args[1], new DefaultTableModel(), true);
-
+		if (util.validateIPv4(args[1])) {
+			util.ports(args[1], new DefaultTableModel(), true);
+		} else
+			System.err.println("Please enter a valid ip.");
 	}
 
 	/**
 	 * Launch the scan of host
+	 * 
 	 * @param args
 	 */
 	private static void terminalScan(String[] args) {
-		
-		util.terminalScan();
+		try {
+			seletionNI();
+			System.out.println("Scanning ...");
+			util.terminalScan();
+		} catch (Exception e) {
+			System.err.println("Please only numbers.");
+		}
 	}
 
 	/**
 	 * Show the message of help
 	 */
 	private static void help() {
-		System.out.println("Usage Network-Watcher.jar [-s ] | [-p ipHost] | [-c ipHost]");
+		System.out.println("Usage Network-Watcher.jar [-s ] | [-p ipHost] | [-c ipHost] | [-f]");
 		System.out.println("Arguments:");
 		System.out.println("-s \t Scan the lAN");
 		System.out.println("-p \t Ports Scan");
@@ -105,6 +136,24 @@ public class Main {
 				+ "# ## # ######   #   #      #    # #      #####  \n"
 				+ "##  ## #    #   #   #    # #    # #      #   #  \n"
 				+ "#    # #    #   #    ####  #    # ###### #    # \n");
+	}
+
+	/**
+	 * Method that show all network interface
+	 */
+	private static void seletionNI() {
+		System.out.println("Please select a network interface.\n");
+		ArrayList<String> stockList = util.networkInterfaces();
+		for (int i = 0; i < stockList.size(); i++) {
+			System.out.println("\t[" + i + "] \t" + stockList.get(i));
+		}
+		@SuppressWarnings("resource")
+		Scanner input = new Scanner(System.in);		
+		int NI = input.nextInt();
+		String resp = stockList.get(NI);
+		String[] array = resp.split("/");
+		util.setPrivateIP(array[1]);
+
 	}
 
 }

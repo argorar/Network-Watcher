@@ -48,8 +48,7 @@ public class WatcherUtil {
 				if(!"lo".equals(netint.getDisplayName()))//ignore looback
 					list.add(displayInterfaceInformation(netint));
 			}
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
+		} catch (SocketException e) {			
 			e.printStackTrace();
 		}
 		return list;
@@ -61,7 +60,7 @@ public class WatcherUtil {
 	 * @return info : information about network interface
 	 * @throws SocketException
 	 */
-	public static String displayInterfaceInformation(NetworkInterface netint) throws SocketException {
+	public  String displayInterfaceInformation(NetworkInterface netint) throws SocketException {
 		String info = "";
 		// cadena+="Display name:\t"+ netint.getDisplayName()+"\n";//Display
 		// name
@@ -664,7 +663,7 @@ public class WatcherUtil {
 	 *            : Host
 	 * @return true: if is v4
 	 */
-	public static boolean validateIPv4(String ip) {
+	public boolean validateIPv4(String ip) {
 		Pattern PATTERN = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 		return PATTERN.matcher(ip).matches();
 	}
