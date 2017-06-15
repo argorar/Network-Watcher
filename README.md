@@ -21,10 +21,38 @@ You can see the subnet information in the file|About menu.
 
 ![about](img/about.png)
 
-## Terminal Mode
-Work in process and correction of some errors.
+## Port Analysis
+You can see all the ports open.
 
-## Ports
+![about](img/ports.png)
+
+## Service Analysis
+You can check the port for services such as HTTP, SMTP and FTP. It does not matter if they are in ports other than the default..
+
+![about](img/services.png)
+
+## Terminal Mode
+Below you will find sample images of the operation by means of the terminal.
+
+![help](img/help.png)
+
+### Scan
+
+![scant](img/scant.png)
+
+### Services Scan
+
+![servicesT](img/servicesT.png)
+
+### Ports Scan
+
+![portsT](img/portsT.png)
+
+### Info Network
+
+![networkt](img/networkt.png)
+
+## Summary Ports
 Below is a list of the most common ports with a brief description.
 
 | Port | Name | Info |
