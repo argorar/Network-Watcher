@@ -38,17 +38,18 @@ public class WatcherUtil {
 
 	/**
 	 * Method that list information about all the network interfaces
+	 * 
 	 * @return list: All the network interfaces
 	 */
 	public ArrayList<String> networkInterfaces() {
 		ArrayList<String> list = new ArrayList<>();
 		try {
 			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-			for (NetworkInterface netint : Collections.list(nets)){			
-				if(!"lo".equals(netint.getDisplayName()))//ignore looback
+			for (NetworkInterface netint : Collections.list(nets)) {
+				if (!"lo".equals(netint.getDisplayName()))// ignore looback
 					list.add(displayInterfaceInformation(netint));
 			}
-		} catch (SocketException e) {			
+		} catch (SocketException e) {
 			e.printStackTrace();
 		}
 		return list;
@@ -56,14 +57,14 @@ public class WatcherUtil {
 
 	/**
 	 * Method that get information about network interface
-	 * @param netint : network interface
+	 * 
+	 * @param netint
+	 *            : network interface
 	 * @return info : information about network interface
 	 * @throws SocketException
 	 */
-	public  String displayInterfaceInformation(NetworkInterface netint) throws SocketException {
+	public String displayInterfaceInformation(NetworkInterface netint) throws SocketException {
 		String info = "";
-		// cadena+="Display name:\t"+ netint.getDisplayName()+"\n";//Display
-		// name
 		info += netint.getName();// name
 		Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
 		for (InetAddress inetAddress : Collections.list(inetAddresses)) {
@@ -99,8 +100,6 @@ public class WatcherUtil {
 				if (nets.hasMoreElements())
 					ni += "-";
 			}
-			// System.out.println(nets.getName());
-			// System.out.println(nets.getDisplayName());
 			data[0] = "";
 			data[1] = ni;
 		} catch (Exception e) {
@@ -119,11 +118,7 @@ public class WatcherUtil {
 	 *            flag true if is terminal, false if is GUI
 	 */
 	public void ports(String ipHost, DefaultTableModel model, boolean implementation) {
-		// int[] puertos = { 20, 21, 22, 23, 25, 53, 59, 79, 80, 110, 113, 119,
-		// 135, 139, 143, 389, 443, 445, 563, 993,
-		// 995, 1080, 1723, 3306, 5000, 8080 };
 		Socket p1;
-		// for (int puerto : puertos) {
 		for (int puerto = 5; puerto < 9000; puerto++) {
 			try {
 				p1 = new Socket();
@@ -136,47 +131,9 @@ public class WatcherUtil {
 				}
 				p1.close();
 			} catch (IOException e) {
-				// Object[] row = { ipHost + ":" + puerto, "closed" };
-				// model.addRow(row);
 			}
 		}
 	}
-
-	/**
-	 * Method that find private IP address not cares operative system
-	 * 
-	 * @return myip private myip address
-	 */
-//	public String tellMyIP() {
-//		NetworkInterface iface = null;
-//		String ethr;
-//		String myip = "";
-//		String regex = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-//				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-//		try {
-//			for (Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces(); ifaces
-//					.hasMoreElements();) {
-//				iface = (NetworkInterface) ifaces.nextElement();
-//				ethr = iface.getName();
-//				// System.out.println(ethr);
-//				// Ethernet or Wifi
-//				if (Pattern.matches("eth[0-9]", ethr) || Pattern.matches("wlo[0-9]", ethr)
-//						|| Pattern.matches("wlan[0-9]", ethr) || Pattern.matches("enp4s[0-9]", ethr)) {
-//					// System.out.println("Interface:" + ethr);
-//					InetAddress ia = null;
-//					for (Enumeration<InetAddress> ips = iface.getInetAddresses(); ips.hasMoreElements();) {
-//						ia = (InetAddress) ips.nextElement();
-//						if (Pattern.matches(regex, ia.getHostAddress())) {
-//							myip = ia.getHostAddress();
-//							return myip;
-//						}
-//					}
-//				}
-//			}
-//		} catch (Exception e) {
-//		}
-//		return myip;
-//	}
 
 	/**
 	 * Method that show in the terminal information about network
@@ -208,8 +165,6 @@ public class WatcherUtil {
 			System.out.printf("High Address:\t\t\t%s\t[%s]\n", info.getHighAddress(),
 					Integer.toBinaryString(info.asInteger(info.getHighAddress())));
 			System.out.printf("Total usable addresses: \t%d\n", Long.valueOf(info.getAddressCountLong()));
-			// System.out.printf("Address List: %s\n\n",
-			// Arrays.toString(info.getAllAddresses()));
 		} catch (SocketException | UnknownHostException e) {
 		}
 	}
@@ -269,24 +224,6 @@ public class WatcherUtil {
 		return allInfo;
 	}
 
-	// public String getNetwork(String maskNetwork,String ip){
-	// String[] mask = "255.192.0.0".split("\\.");
-	// String[] ipAddress = ip.split("\\.");
-	// StringBuffer ipSubnet = new StringBuffer();
-	// for(int i=0; i<4; i++)
-	// try{
-	// if(ipSubnet.length()>0)
-	// ipSubnet.append('.');
-	// ipSubnet.append(Integer.parseInt(ipAddress[i]) &
-	// Integer.parseInt(mask[i]));
-	// }catch(Exception x){
-	// //Integer parsing exception, wrong ipaddress or mask
-	// break;
-	// }
-	// System.out.println(ipSubnet);
-	// return ipSubnet.toString();
-	// }
-
 	/**
 	 * Method that get number of host
 	 * 
@@ -300,21 +237,6 @@ public class WatcherUtil {
 			x = 1D;
 		return x.intValue() - 2;
 	}
-
-	// private void convertNumericIpToSymbolic(Integer host) {
-	// StringBuffer sb = new StringBuffer(15);
-	//
-	// for (int shift = 24; shift > 0; shift -= 8) {
-	//
-	// // process 3 bytes, from high order byte down.
-	// sb.append(Integer.toString((host >>> shift) & 0xff));
-	//
-	// sb.append('.');
-	// }
-	// sb.append(Integer.toString(host & 0xff));
-	//
-	// System.out.println(sb.toString());
-	// }
 
 	/**
 	 * Method that scan ip and get hostname, NIC and MAC
@@ -413,10 +335,8 @@ public class WatcherUtil {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
 				// Le cada linea del response
 				String line = reader.readLine();
-				if (line != null) {
-					if (line.contains("200"))
-						return true;
-				}
+				if (line != null && line.contains("200"))
+					return true;
 				// cierra los canales
 				os.close();
 				is.close();
@@ -468,10 +388,8 @@ public class WatcherUtil {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
 				// Le cada linea del response
 				String line = reader.readLine();
-				if (line != null) {
-					if (line.contains("HTTP"))
-						return true;
-				}
+				if (line != null && line.contains("HTTP"))
+					return true;
 				// cierra los canales
 				os.close();
 				is.close();
@@ -519,10 +437,8 @@ public class WatcherUtil {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
 				// Le cada linea del response
 				String line = reader.readLine();
-				if (line != null) {
-					if (line.contains("FTP"))
-						return true;
-				}
+				if (line != null && line.contains("FTP"))
+					return true;
 				// cierra los canales
 				os.close();
 				is.close();
@@ -569,10 +485,8 @@ public class WatcherUtil {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
 				// Le cada linea del response
 				String line = reader.readLine();
-				if (line != null) {
-					if (line.contains("SMTP") || line.contains("smtp"))
-						return true;
-				}
+				if (line != null && (line.contains("SMTP") || line.contains("smtp")))
+					return true;
 				// cierra los canales
 				os.close();
 				is.close();
@@ -667,11 +581,19 @@ public class WatcherUtil {
 		Pattern PATTERN = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 		return PATTERN.matcher(ip).matches();
 	}
-	
+
+	/**
+	 * Method that set the private address
+	 * @param privateIP : local host
+	 */
 	public void setPrivateIP(String privateIP) {
 		this.privateIP = privateIP;
 	}
-	
+
+	/**
+	 * Method that get address of the local host
+	 * @return privateAddress
+	 */
 	public String getPrivateIP() {
 		return privateIP;
 	}

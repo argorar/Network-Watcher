@@ -39,7 +39,7 @@ public class Main {
 			help();
 		} else if (args[0].equals("-s")) {
 			welcome();
-			terminalScan(args);
+			terminalScan();
 		} else if (args[0].equals("-p")) {
 			portScan(args);
 		} else if (args[0].equals("-c")) {
@@ -93,10 +93,8 @@ public class Main {
 
 	/**
 	 * Launch the scan of host
-	 * 
-	 * @param args
-	 */
-	private static void terminalScan(String[] args) {
+	*/
+	private static void terminalScan() {
 		try {
 			seletionNI();
 			System.out.println("Scanning ...");
